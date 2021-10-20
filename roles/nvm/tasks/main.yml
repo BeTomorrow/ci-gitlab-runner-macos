@@ -1,0 +1,58 @@
+---
+- name: Ensure nvm installed
+  community.general.homebrew:
+    name: nvm
+    state: present
+
+- name: Ensure .nvm directory exist
+  ansible.builtin.file:
+    path: ~/.nvm
+    state: directory
+    mode: '0755'
+
+# Update .zshrc for local sessions
+
+- name: Ensure NVM_DIR is in .zshrc
+  lineinfile:
+    path: ~/.zshrc
+    line: export NVM_DIR="$HOME/.nvm"
+    create: yes
+
+- name: Ensure load nvm is in .zshrc
+  lineinfile:
+    path: ~/.zshrc
+    line: "[ -s \"{{brew_install_dir}}/opt/nvm/nvm.sh\" ] && . \"{{brew_install_dir}}/opt/nvm/nvm.sh\""
+    create: yes
+
+- name: Ensure bash_completion is in .zshrc
+  lineinfile:
+    path: ~/.zshrc
+    line: "[ -s \"{{brew_install_dir}}/opt/nvm/etc/bash_completion.d/nvm\" ] && . \"{{brew_install_dir}}/opt/nvm/etc/bash_completion.d/nvm\""
+    create: yes
+
+# Update .bash_profile, gitlab-ci user bash sessions
+
+- name: Ensure NVM_DIR is in .bash_profile
+  lineinfile:
+    path: ~/.bash_profile
+    line: export NVM_DIR="$HOME/.nvm"
+    create: yes
+
+- name: Ensure load nvm is in .bash_profile
+  lineinfile:
+    path: ~/.bash_profile
+    line: "[ -s \"{{brew_install_dir}}/opt/nvm/nvm.sh\" ] && . \"{{brew_install_dir}}/opt/nvm/nvm.sh\""
+    create: yes
+
+- name: Ensure bash_completion is in .bash_profile
+  lineinfile:
+    path: ~/.bash_profile
+    line: "[ -s \"{{brew_install_dir}}/opt/nvm/etc/bash_completion.d/nvm\" ] && . \"{{brew_install_dir}}/opt/nvm/etc/bash_completion.d/nvm\""
+    create: yes
+
+# Install node and npm
+- name: Ensure node installed
+  shell: source ~/.zshrc && nvm install {{node_version}}
+
+- name: Ensure latest npm installed according to node version
+  shell: source ~/.zshrc && nvm install-latest-npm

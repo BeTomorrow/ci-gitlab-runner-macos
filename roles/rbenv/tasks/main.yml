@@ -1,0 +1,35 @@
+---
+- name: Ensure rbenv installed
+  community.general.homebrew:
+    name: rbenv
+    state: present
+
+- name: Ensure rbenv init is in .zshrc
+  lineinfile:
+    path: ~/.zshrc
+    line: eval "$(rbenv init - zsh)"
+    create: yes
+
+- name: Ensure rbenv init is in .bash_profile
+  lineinfile:
+    path: ~/.bash_profile
+    line: eval "$(rbenv init - bash)"
+    create: yes
+
+# Install ruby and bundler
+
+- name: Check ruby installed
+  shell: "source ~/.zshrc && rbenv versions | grep {{ruby_version}} | cat"
+  register: ruby_installed
+  check_mode: no
+  changed_when: false
+
+- name: Ensure ruby installed
+  shell: source ~/.zshrc && rbenv install {{ruby_version}}
+  when: ruby_installed.stdout == ""
+
+- name: Ensure ruby version is used
+  shell: source ~/.zshrc && rbenv global {{ruby_version}}
+
+- name: Ensure bundler installed
+  shell: source ~/.zshrc && gem install bundler

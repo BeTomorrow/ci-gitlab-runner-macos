@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: false
+  roles:
+    - brew
+    - rbenv
+    - nvm
+    - upload_xcode
+    - macstadium.xcode
+    - gitlab-runner
+  vars:
+    node_version: v16.10.0
+    ruby_version: 2.7.4
+    xcode_src: ./Xcode_13-fake.xip
+    xcode_xip_location: "{{ ansible_env.HOME }}/Xcode_13.xip"
+    xcode_target_version: 13
+    xcode_xip_extraction_timeout: 30000
+

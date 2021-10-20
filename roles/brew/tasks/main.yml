@@ -1,0 +1,31 @@
+---
+- name: Allow 'admin' group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%admin'
+    line: '%admin ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+  become: true
+  become_method: sudo
+
+- name: Check brew exists
+  stat:
+    path: "{{ brew_install_dir }}/bin/brew"
+  register: homebrew_check
+
+- name: Ensure Homebrew is installed
+  shell: yes | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  when: not homebrew_check.stat.exists
+
+- name: Ensure brew is in zshrc PATH
+  lineinfile:
+    path: ~/.zshrc
+    line: PATH={{ brew_install_dir }}/bin:$PATH
+    create: yes
+
+- name:  Ensure brew is in bash PATH
+  lineinfile:
+    path: ~/.bash_profile
+    line: PATH={{ brew_install_dir }}/bin:$PATH
+    create: yes

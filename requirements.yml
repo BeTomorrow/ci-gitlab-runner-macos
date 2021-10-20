@@ -1,0 +1,7 @@
+---
+roles:
+  - name: macstadium.xcode
+
+collections:
+  - name: community.general
+

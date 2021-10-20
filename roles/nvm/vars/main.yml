@@ -1,0 +1,5 @@
+brew_install_dir_map:
+  'x86_64': '/usr/local'
+  'arm64': '/opt/homebrew'
+
+brew_install_dir: "{{ brew_install_dir_map[ ansible_architecture ] }}"

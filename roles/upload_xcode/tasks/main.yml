@@ -1,0 +1,12 @@
+---
+- name: test whether Xcode was uploaded earlier
+  stat: 
+    path: "{{ xcode_xip_location }}"
+  register: xcode_dl_path
+
+- name: Upload Xcode
+  copy: 
+    src: "{{ xcode_src }}"
+    dest: "{{ xcode_xip_location }}"
+  when: 
+    - xcode_dl_path.stat.exists == False

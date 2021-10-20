@@ -1,0 +1,3 @@
+.vagrant
+*.xip
+.vault_passwd

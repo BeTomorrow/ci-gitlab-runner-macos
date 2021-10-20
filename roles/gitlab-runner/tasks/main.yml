@@ -1,0 +1,26 @@
+---
+- name: Ensure gitlab-runner installed
+  community.general.homebrew:
+    name: gitlab-runner
+    state: present
+
+- name: Unregister old runner
+  shell: "source ~/.zshrc && gitlab-runner unregister --all-runners"
+  when: (gitlab_token is defined) and (gitlab_token|length > 0)
+
+- name: Register runner
+  shell: "source ~/.zshrc && gitlab-runner register \
+          --non-interactive \
+          --tag-list xcode{{xcode_target_version}} \
+          --request-concurrency 1 \
+          --url https://gitlab.com \
+          --registration-token {{gitlab_token}} \
+          --executor shell \
+          --output-limit 51200 \
+          --pre-build-script \"rm -rf ~/Library/Developer/Xcode/Archives/* \n rm -rf ~/Library/Developer/Xcode/DerivedData/*\""
+  when: (gitlab_token is defined) and (gitlab_token|length > 0)
+
+
+- name: Start Runner
+  shell: "brew services start gitlab-runner"
+  when: (gitlab_token is defined) and (gitlab_token|length > 0)
