@@ -2,4 +2,4 @@
 ci-agents:
   hosts:
     agent1:
-      ansible_host: 192.168.2.73
+      ansible_host: 
